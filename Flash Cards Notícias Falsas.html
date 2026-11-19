@@ -1,0 +1,270 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Flash Cards Notícias Falsas</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --madeira-escura: #2b1a0e;
+    --madeira: #5a3a1e;
+    --madeira-clara: #d9a066;
+    --papel: #fbf0d9;
+    --tinta: #3b2412;
+    --chapeu: #c0392b;
+    --folha: #4ade80;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px; padding-block: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    color: var(--papel); font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 118px, rgba(0,0,0,.35) 118px 120px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 3px, transparent 3px 7px),
+      linear-gradient(180deg, #3a2412, var(--madeira-escura));
+  }
+  h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.6rem; text-align: center; letter-spacing: .5px; }
+  .sub { margin: 0; text-align: center; color: var(--madeira-clara); font-size: .95rem; max-width: 420px; }
+  #contador { color: #e7cfa8; font-size: .95rem; }
+
+  .boneco { width: min(92vw, 340px); }
+  .boneco svg { width: 100%; height: auto; display: block; overflow: visible; }
+  #nariz, #folha { transition: all .5s ease; }
+
+  .cena { width: min(90vw, 480px); height: 280px; perspective: 1000px; }
+  .card { width: 100%; height: 100%; position: relative; transition: transform .6s; transform-style: preserve-3d; }
+  .card.virado { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; border-radius: 14px; text-align: center; font-size: 1.2rem; line-height: 1.5;
+    border: 4px solid #1d1008; box-shadow: 0 8px 0 #1d1008, 0 14px 24px rgba(0,0,0,.45);
+  }
+  .frente {
+    color: var(--papel);
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 2px, transparent 2px 46px), linear-gradient(135deg, #8a5a2d, var(--madeira));
+  }
+  .verso {
+    color: var(--tinta); background: var(--papel); transform: rotateY(180deg);
+    font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; line-height: 1.6;
+    outline: 2px dashed rgba(59,36,18,.35); outline-offset: -14px;
+  }
+  .rotulo { font-size: .8rem; opacity: .75; margin-bottom: 12px; }
+  .botoes { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+  button {
+    background: var(--chapeu); color: #fff; border: 0; padding: 12px 18px; border-radius: 10px;
+    font: inherit; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 0 #7a1f15;
+  }
+  button:hover { background: #d4493a; }
+  button:active { transform: translateY(3px); box-shadow: 0 1px 0 #7a1f15; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--folha); outline-offset: 3px; }
+  .resposta-area { display: flex; gap: 10px; width: min(90vw, 480px); margin-top: 6px; }
+  .resposta-area input {
+    flex: 1; min-width: 0; padding: 12px 14px; border-radius: 10px; border: 3px solid #1d1008;
+    background: var(--papel); color: var(--tinta); font: inherit; font-size: 1rem;
+  }
+  .resposta-area input::placeholder { color: #8a6a45; }
+  .resposta-area input:disabled { opacity: .7; }
+  .resposta-area button { background: #15803d; box-shadow: 0 4px 0 #0b4a24; }
+  .resposta-area button:hover { background: #16a34a; }
+  .resposta-area button:disabled { background: #4b5563; box-shadow: 0 4px 0 #2b3038; cursor: default; }
+  .dica { color: #cdb48c; font-size: .85rem; text-align: center; max-width: 440px; }
+  #placar { color: #e7cfa8; font-size: .95rem; margin-top: -10px; }
+  .resultado { display: none; width: min(90vw, 480px); text-align: center; font-weight: bold; padding: 10px 14px; border-radius: 10px; border: 2px solid; }
+  .resultado.certo { display: block; background: #14532d; color: #bbf7d0; border-color: #4ade80; }
+  .resultado.parcial { display: block; background: #713f12; color: #fde68a; border-color: #facc15; }
+  .resultado.errado { display: block; background: #7f1d1d; color: #fecaca; border-color: #f87171; }
+  @media (prefers-reduced-motion: reduce) { .card, #nariz, #folha { transition: none; } }
+</style>
+
+  <h1>Flash Cards: Notícias Falsas</h1>
+  <p class="sub">Cada erro faz o nariz do Pinóquio crescer. Consegue manter ele pequeno?</p>
+
+  <div class="boneco" aria-hidden="true">
+    <svg viewBox="0 0 340 130">
+      <g stroke="#e7cfa8" stroke-width="1.5" opacity=".7">
+        <line x1="50" y1="-30" x2="62" y2="40"/><line x1="90" y1="-30" x2="80" y2="30"/>
+      </g>
+      <polygon points="38,48 70,2 104,48" fill="#c0392b" stroke="#1d1008" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M70,4 q22,-18 34,2 q-14,-6 -30,6z" fill="#facc15" stroke="#1d1008" stroke-width="2"/>
+      <circle cx="26" cy="72" r="11" fill="#d9a066" stroke="#1d1008" stroke-width="3"/>
+      <circle cx="70" cy="72" r="42" fill="#e0a96d" stroke="#1d1008" stroke-width="3"/>
+      <path d="M40,60 q5,-4 10,0 M58,56 q4,-3 8,-1" stroke="#a87038" stroke-width="2" fill="none" opacity=".6"/>
+      <circle cx="56" cy="68" r="9" fill="#fff" stroke="#1d1008" stroke-width="2.5"/><circle cx="58" cy="69" r="4" fill="#1d1008"/>
+      <circle cx="86" cy="68" r="9" fill="#fff" stroke="#1d1008" stroke-width="2.5"/><circle cx="88" cy="69" r="4" fill="#1d1008"/>
+      <path d="M46,56 q10,-8 20,-2 M78,54 q10,-6 20,2" stroke="#1d1008" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M52,92 q18,14 36,0" stroke="#1d1008" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect id="nariz" x="96" y="74" height="12" rx="6" width="24" fill="#d9a066" stroke="#1d1008" stroke-width="2.5"/>
+      <g id="folha" transform="translate(120,80)">
+        <ellipse cx="2" cy="-9" rx="9" ry="4" fill="#4ade80" stroke="#166534" stroke-width="1.5" transform="rotate(-40 2 -9)"/>
+      </g>
+    </svg>
+  </div>
+  <div id="contador"></div>
+  <div id="placar"></div>
+
+  <div class="cena" id="cena">
+    <div class="card" id="card">
+      <div class="face frente"><div class="rotulo">Pergunta</div><div id="pergunta"></div></div>
+      <div class="face verso"><div class="rotulo">Resposta</div><div id="resposta"></div></div>
+    </div>
+  </div>
+
+  <div class="resposta-area">
+    <input id="campo" type="text" placeholder="Digite sua resposta..." autocomplete="off" aria-label="Sua resposta">
+    <button id="responder">Responder</button>
+  </div>
+  <div id="resultado" class="resultado" aria-live="polite"></div>
+
+  <div class="botoes">
+    <button id="anterior">⬅ Anterior</button>
+    <button id="embaralhar">🔀 Embaralhar</button>
+    <button id="proximo">Próximo ➡</button>
+  </div>
+  <div class="dica">Escreva sua resposta e toque em Responder (ou Enter). A correção procura palavras-chave, então confira também a resposta do card.</div>
+
+<script>
+  const cards = [
+    { p: "O que são fake news?",
+      r: "Informações falsas ou enganosas, apresentadas como se fossem notícias verdadeiras, geralmente para enganar, gerar cliques ou influenciar opiniões." },
+    { p: "O que é desinformação?",
+      r: "Informação falsa criada ou espalhada de propósito para enganar as pessoas." },
+    { p: "Qual a diferença entre desinformação e informação equivocada (misinformation)?",
+      r: "Na desinformação há intenção de enganar. Na informação equivocada, a pessoa compartilha algo falso acreditando que é verdade, sem má intenção." },
+    { p: "Por que as fake news se espalham tão rápido?",
+      r: "Porque despertam emoções fortes (raiva, medo, indignação), confirmam o que a pessoa já pensa e são compartilhadas em redes sociais sem checagem." },
+    { p: "O que é viés de confirmação?",
+      r: "Tendência de aceitar mais facilmente informações que confirmam nossas crenças e de rejeitar as que as contrariam. Ajuda as fake news a colarem." },
+    { p: "O que é uma bolha de filtro (ou bolha social)?",
+      r: "Efeito dos algoritmos que mostram conteúdos parecidos com o que a pessoa já consome, reduzindo o contato com opiniões diferentes." },
+    { p: "O que é clickbait?",
+      r: "Título exagerado ou sensacionalista criado só para atrair cliques, muitas vezes com conteúdo que não corresponde ao que promete." },
+    { p: "O que é checagem de fatos (fact-checking)?",
+      r: "Processo de verificar se uma informação é verdadeira, consultando fontes confiáveis, dados oficiais e agências de checagem." },
+    { p: "Cite agências brasileiras de checagem de fatos.",
+      r: "Agência Lupa, Aos Fatos, Projeto Comprova e o Fato ou Fake (do G1)." },
+    { p: "Qual o primeiro passo ao receber uma notícia suspeita?",
+      r: "Não compartilhar na hora. Parar, ler a notícia inteira e verificar a fonte antes de repassar." },
+    { p: "Quais sinais indicam que uma notícia pode ser falsa?",
+      r: "Título exagerado, texto sem autor ou data, erros de português, falta de fontes, apelo emocional forte, pedido de 'compartilhe urgente' e site desconhecido." },
+    { p: "Por que é importante verificar a fonte de uma notícia?",
+      r: "Porque veículos confiáveis têm responsabilidade editorial e corrigem erros, enquanto sites falsos imitam o visual de portais sérios para enganar." },
+    { p: "O que é uma deepfake?",
+      r: "Vídeo, áudio ou imagem manipulado com inteligência artificial para fazer parecer que alguém disse ou fez algo que nunca aconteceu." },
+    { p: "Como verificar se uma foto é antiga ou foi tirada de contexto?",
+      r: "Fazendo busca reversa de imagem (Google Imagens, TinEye) para ver onde e quando ela apareceu pela primeira vez." },
+    { p: "O que são robôs (bots) nas redes sociais e qual o papel deles nas fake news?",
+      r: "Contas automatizadas que publicam e compartilham conteúdo em massa, fazendo uma mentira parecer popular e verdadeira." },
+    { p: "Como as fake news podem prejudicar a sociedade?",
+      r: "Podem influenciar eleições, causar pânico, atrapalhar a saúde pública (ex.: boatos sobre vacinas), destruir reputações e gerar violência." },
+    { p: "Compartilhar fake news pode ter consequências legais?",
+      r: "Sim. Dependendo do caso, pode configurar crimes como calúnia, difamação ou injúria, além de indenização por danos morais." },
+    { p: "O que é 'pós-verdade'?",
+      r: "Situação em que fatos objetivos têm menos influência na opinião pública do que apelos à emoção e às crenças pessoais." },
+    { p: "O que é educação midiática (letramento midiático)?",
+      r: "Capacidade de ler, analisar e questionar criticamente o que se consome nos meios de comunicação, incluindo identificar notícias falsas." },
+    { p: "Cite 3 atitudes para combater as fake news.",
+      r: "Checar a fonte, não compartilhar sem verificar e denunciar conteúdos falsos nas plataformas. Também vale conversar com amigos e familiares sobre o assunto." }
+  ];
+
+  // Palavras-chave aceitas por card (sem acentos). Cada grupo é uma ideia; 'min' = quantas ideias precisam aparecer.
+  const gabarito = [
+    { min: 1, g: [["falsa","falso","mentira","engan","boato","inverdade"]] },
+    { min: 2, g: [["falsa","falso","mentira","engan"],["proposito","intencao","intencional","deliberad","proposital"]] },
+    { min: 1, g: [["intencao","proposito","intencional","deliberad","ma fe","consciente","sem querer","acreditando"]] },
+    { min: 2, g: [["emoc","raiva","medo","indigna","sentiment"],["confirm","ja pensa","cren","concorda"],["compartilh","redes","sem check","sem verific","rapido"]] },
+    { min: 2, g: [["confirm","crenca","cren","ja acredit","ja pensa","concorda","ideias","opini"],["aceit","acredit","busca","procura","tendencia","valoriz","prefer","ignor","rejeit"]] },
+    { min: 2, g: [["algoritm"],["parecid","mesm","semelhant","gosta","ja consome","ja pensa","interesse","ja ve","ja concorda","preferenc"],["diferent","isol","limit","reduz","restrin","contrari","oposta"]] },
+    { min: 1, g: [["titulo","manchete","clique","click","atrair","sensacional","exager","isca","engan"]] },
+    { min: 2, g: [["verific","confer","check","confirm","investig","pesquis"],["fonte","fato","verdad","dados","agenc","confiav","informac","noticia"]] },
+    { min: 1, g: [["lupa"],["aos fatos"],["comprova"],["fato ou fake"],["e farsas","efarsas","boatos"]] },
+    { min: 1, g: [["nao compartilh","nao repass","nao divulg","nao envi","nao post","nao espalh","parar"," pare ","esperar","antes de compartilh","antes de repass"],["verific","check"," ler ","fonte","confer","pesquis","investig"]] },
+    { min: 2, g: [["titulo","exager","sensacional"],["autor"],[" data "],["erro","portugues","ortograf"],["fonte"],["emoc","apelo","raiva","medo"],["urgente","compartilhe"],["desconhec","site"]] },
+    { min: 1, g: [["confiav","responsab","editorial","credibil","serio","reputac","corrig"],["imit","falso","engan","mentira","verdad"]] },
+    { min: 1, g: [[" ia ","inteligencia artificial","manipul","montag","trucad","edit","simul","falsific","fake"]] },
+    { min: 1, g: [["reversa","tineye","google imagens","google lens"," lens ","pesquis","procurar a imagem","buscar a imagem","buscar imagem","procurar imagem"]] },
+    { min: 1, g: [["automat","programad","perfis falsos","contas falsas","fake","maquina","nao sao pessoas"],["massa","popular","viral","impulsion","amplific","espalh","compartilh","curtid","parece"]] },
+    { min: 1, g: [["eleic","polit","voto"],["panico","medo","confus"],["saude","vacina","doenca","morte"],["reputac","difam"],["violenc","odio","conflito","agress","linch"]] },
+    { min: 1, g: [[" sim ","crime","calunia","difamac","injuria","indeniz","process","prisao"," preso ","multa","responsabiliz","punid","danos morais","justica"," lei "]] },
+    { min: 2, g: [["emoc","crenca","cren","sentiment","opiniao pessoal","pessoal"],["fatos"," fato ","objetiv","verdade","menos import","menos influen","pouco import","nao import"]] },
+    { min: 2, g: [["analis","critic","questionar","interpret","avali","entender"," ler ","compreend","identific","verific","refletir"],["midia","meios","noticia","informac","conteudo","comunicac","internet","redes","fake"]] },
+    { min: 2, g: [["fonte","checar","verific","confer","pesquis","check"],["nao compartilh","nao repass","nao divulg","nao espalh","sem verificar","antes de compartilh"],["denunci","report","sinaliz"],["conversar","dialog","educar","orient","alert","ensinar","explicar"]] }
+  ];
+  const resultados = {};
+  const norm = t => " " + t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim() + " ";
+  function avaliar(i, resp) {
+    const t = norm(resp), { min, g } = gabarito[i];
+    const n = g.filter(grupo => grupo.some(k => t.includes(k))).length;
+    return n >= min ? "certo" : n > 0 ? "parcial" : "errado";
+  }
+  function atualizarPlacar() {
+    const respondidas = Object.keys(resultados).length;
+    const acertos = Object.values(resultados).filter(r => r === "certo").length;
+    document.getElementById("placar").textContent = `Acertos: ${acertos} de ${respondidas} respondidas`;
+    const erros = Object.values(resultados).filter(r => r === "errado").length;
+    const largura = 24 + erros * (190 / cards.length);
+    nariz.setAttribute("width", largura);
+    folha.setAttribute("transform", `translate(${96 + largura},80)`);
+  }
+
+  let ordem = cards.map((_, i) => i);
+  let atual = 0;
+  const card = document.getElementById("card");
+  const nariz = document.getElementById("nariz");
+  const folha = document.getElementById("folha");
+  const campo = document.getElementById("campo");
+  const botaoResponder = document.getElementById("responder");
+  const resultadoEl = document.getElementById("resultado");
+
+  function mostrar() {
+    card.classList.remove("virado");
+    campo.value = ""; campo.disabled = false; botaoResponder.disabled = false;
+    resultadoEl.className = "resultado"; resultadoEl.textContent = "";
+    atualizarPlacar();
+    const c = cards[ordem[atual]];
+    document.getElementById("pergunta").textContent = c.p;
+    document.getElementById("resposta").textContent = c.r;
+    document.getElementById("contador").textContent = `Card ${atual + 1} de ${cards.length}`;
+  }
+  function responder() {
+    if (!campo.value.trim()) { campo.focus(); return; }
+    const i = ordem[atual];
+    const res = avaliar(i, campo.value);
+    resultados[i] = res;
+    const msgs = {
+      certo: "✅ Resposta correta! Muito bem.",
+      parcial: "🟡 Quase! Sua resposta tem parte da ideia. Veja a resposta completa no card.",
+      errado: "❌ Resposta incorreta. Veja a resposta certa no card."
+    };
+    resultadoEl.className = "resultado " + res;
+    resultadoEl.textContent = msgs[res];
+    atualizarPlacar();
+    card.classList.add("virado");
+    campo.disabled = true; botaoResponder.disabled = true; campo.blur();
+  }
+  function proximo() { atual = (atual + 1) % cards.length; mostrar(); }
+  function anterior() { atual = (atual - 1 + cards.length) % cards.length; mostrar(); }
+  function embaralhar() {
+    for (let i = ordem.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ordem[i], ordem[j]] = [ordem[j], ordem[i]];
+    }
+    for (const k in resultados) delete resultados[k];
+    atual = 0; mostrar();
+  }
+
+  botaoResponder.addEventListener("click", responder);
+  campo.addEventListener("keydown", e => { if (e.key === "Enter") responder(); });
+  document.getElementById("proximo").addEventListener("click", proximo);
+  document.getElementById("anterior").addEventListener("click", anterior);
+  document.getElementById("embaralhar").addEventListener("click", embaralhar);
+  document.addEventListener("keydown", e => {
+    if (e.target === campo) return;
+    if (e.key === "ArrowRight") proximo();
+    else if (e.key === "ArrowLeft") anterior();
+  });
+
+  mostrar();
+</script>
+
+</body></html>
